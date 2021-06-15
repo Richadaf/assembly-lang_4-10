@@ -1,0 +1,49 @@
+         BR      main
+msgin:   .ASCII  "Please input a number in base 4 : \x00"
+msgrslt: .ASCII  "\nThe Decimal Equivalent is \x00 "
+msgbye:  .ASCII  "\nThank you. Good-bye \x00"
+msgrty:  .ASCII  "\nDo you want to input another number (answer y or n)? \x00" 
+
+char:    .word   2
+total:   .BLOCK  2 
+crntDgt: .word   0x0000      ;current digit from usrIn
+ynIn:    .word   0x0000      ;declare as n  
+
+init:    lda     0,i
+         sta     total,d
+         chari   '\n',d      ;Clear buffer 
+         
+         
+main:    STRO         msgin,d
+
+getIn:   CHARI   char,d
+         LDBYTEA char,d 
+         CPA     0x000A,i ;Compare with linefeed
+         BREQ    msgRslt  ;Show result if the same as line feed, i.e all input checked 
+         SUBA    0x0030,i; subtract from ascii 0 to give real digit 
+         STA     crntDgt,d 
+         LDA     total,d
+         ASLA
+         ASLA    
+         ADDA    crntDgt,d 
+         STA     total,d
+         BR      getIn 
+
+msgRslt: STRO    msgrslt,d   
+         DECO    total,d
+
+
+rtry:    STRO    msgrty,d
+         CHARI   ynIn,d      
+         ldbytea ynIn,d 
+         CPA     0x0079,i  ;compare to ascii y
+         BREQ    init
+
+bye:     STRO    msgbye,d
+         STOP 
+
+         
+.END
+
+
+           
